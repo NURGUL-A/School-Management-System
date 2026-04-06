@@ -3,63 +3,38 @@ package kz.enu.School.Management.System.entities;
 import java.util.List;
 
 public class School {
-
     private Long id;
-    private String name;
+    private String schoolName;
     private String city;
     private List<Student> students;
     private List<Teacher> teachers;
 
+    // 1. Пустой конструктор
     public School() {
     }
 
-    public School(Long id, String name, String city,
-                  List<Student> students,
-                  List<Teacher> teachers) {
+    // 2. Конструктор со ВСЕМИ 5 полями (именно его ищет контроллер)
+    public School(Long id, String schoolName, String city, List<Student> students, List<Teacher> teachers) {
         this.id = id;
-        this.name = name;
+        this.schoolName = schoolName;
         this.city = city;
         this.students = students;
         this.teachers = teachers;
     }
 
-    public Long getId() {
-        return id;
-    }
+    // Геттеры и сеттеры
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
-    public String getName() {
-        return name;
-    }
+    public String getSchoolName() { return schoolName; }
+    public void setSchoolName(String schoolName) { this.schoolName = schoolName; }
 
-    public String getCity() {
-        return city;
-    }
+    public String getCity() { return city; }
+    public void setCity(String city) { this.city = city; }
 
-    public List<Student> getStudents() {
-        return students;
-    }
+    public List<Student> getStudents() { return students; }
+    public void setStudents(List<Student> students) { this.students = students; }
 
-    public List<Teacher> getTeachers() {
-        return teachers;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setCity(String city) {
-        this.city = city;
-    }
-
-    public void setStudents(List<Student> students) {
-        this.students = students;
-    }
-
-    public void setTeachers(List<Teacher> teachers) {
-        this.teachers = teachers;
-    }
+    public List<Teacher> getTeachers() { return teachers; }
+    public void setTeachers(List<Teacher> teachers) { this.teachers = teachers; }
 }

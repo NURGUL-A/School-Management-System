@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin - Students</title>
+    <style>
+        :root {
+            --bg1: #fef3c7;
+            --bg2: #fde68a;
+            --ink: #1f2937;
+            --muted: #6b7280;
+            --card: #fffdf2;
+            --accent: #0f766e;
+            --danger: #b91c1c;
+        }
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background: linear-gradient(135deg, var(--bg1) 0, var(--bg2) 100%);
+            color: var(--ink);
+            font-family: "Georgia", "Times New Roman", serif;
+        }
+        .wrap {
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 28px 18px 40px;
+        }
+        header {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            gap: 12px;
+        }
+        h1 { margin: 0; letter-spacing: 0.4px; }
+        .subtitle { color: var(--muted); font-size: 14px; }
+        .grid {
+            margin-top: 18px;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 18px;
+        }
+        .card {
+            background: var(--card);
+            border: 1px solid #f59e0b;
+            border-radius: 14px;
+            padding: 16px;
+            box-shadow: 0 12px 30px rgba(0,0,0,0.12);
+        }
+        .row {
+            display: grid;
+            grid-template-columns: 1fr 120px 120px 120px;
+            gap: 10px;
+            align-items: center;
+        }
+        .row input {
+            padding: 8px 10px;
+            border-radius: 8px;
+            border: 1px solid #d1d5db;
+            background: #fff;
+        }
+        button {
+            padding: 8px 10px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-weight: 700;
+        }
+        .primary { background: var(--accent); color: #ecfeff; }
+        .ghost { background: transparent; border: 1px solid #9ca3af; color: #374151; }
+        .danger { background: var(--danger); color: #fff; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            background: #fff;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        th, td {
+            padding: 10px;
+            border-bottom: 1px solid #f3f4f6;
+            text-align: left;
+            font-size: 14px;
+        }
+        th { background: #fffbeb; }
+        .muted { color: var(--muted); font-size: 12px; }
+        .error { color: var(--danger); }
+        @media (max-width: 720px) {
+            .row { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="wrap">
+    <header>
+        <div>
+            <h1>Students</h1>
+            <div class="subtitle">Admin console for create, edit, and delete</div>
+        </div>
+        <div><a href="/logout">Logout</a></div>
+    </header>
+
+    <div class="grid">
+        <div class="card">
+            <div class="row">
+                <input id="studentId" type="hidden">
+                <input id="studentName" placeholder="Student name">
+                <input id="studentAge" type="number" min="1" placeholder="Age">
+                <button id="saveBtn" class="primary">Save</button>
+                <button id="resetBtn" type="button" class="ghost">Reset</button>
+            </div>
+            <div id="status" class="muted"></div>
+            <div id="error" class="error"></div>
+        </div>
+
+        <div class="card">
+            <table>
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Age</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody id="studentsBody"></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    const studentsBody = document.getElementById("studentsBody");
+    const studentId = document.getElementById("studentId");
+    const studentName = document.getElementById("studentName");
+    const studentAge = document.getElementById("studentAge");
+    const saveBtn = document.getElementById("saveBtn");
+    const resetBtn = document.getElementById("resetBtn");
+    const statusEl = document.getElementById("status");
+    const errorEl = document.getElementById("error");
+
+    function setStatus(msg) { statusEl.textContent = msg || ""; }
+    function setError(msg) { errorEl.textContent = msg || ""; }
+
+    async function loadStudents() {
+        setError("");
+        setStatus("Loading...");
+        const res = await fetch("/school/students");
+        const data = await res.json();
+        renderRows(data);
+        setStatus("Loaded " + data.length + " students.");
+    }
+
+    function renderRows(students) {
+        studentsBody.innerHTML = "";
+        students.forEach(s => {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+                <td>${s.id}</td>
+                <td>${s.name}</td>
+                <td>${s.age}</td>
+                <td class="actions">
+                    <button type="button" data-id="${s.id}" data-name="${s.name}" data-age="${s.age}" class="editBtn ghost">Edit</button>
+                    <button type="button" data-id="${s.id}" class="deleteBtn danger">Delete</button>
+                </td>
+            `;
+            studentsBody.appendChild(tr);
+        });
+
+        document.querySelectorAll(".editBtn").forEach(btn => {
+            btn.addEventListener("click", () => {
+                studentId.value = btn.dataset.id;
+                studentName.value = btn.dataset.name;
+                studentAge.value = btn.dataset.age;
+            });
+        });
+
+        document.querySelectorAll(".deleteBtn").forEach(btn => {
+            btn.addEventListener("click", async () => {
+                if (!confirm("Delete this student?")) return;
+                await fetch("/school/student/" + btn.dataset.id, { method: "DELETE" });
+                await loadStudents();
+            });
+        });
+    }
+
+    async function saveStudent() {
+        setError("");
+        const name = studentName.value.trim();
+        const age = parseInt(studentAge.value, 10);
+        if (!name || !age) {
+            setError("Name and age are required.");
+            return;
+        }
+
+        const payload = { name, age };
+        const id = studentId.value;
+        if (id) {
+            await fetch("/school/student/" + id, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload)
+            });
+        } else {
+            await fetch("/school/student", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload)
+            });
+        }
+
+        resetForm();
+        await loadStudents();
+    }
+
+    function resetForm() {
+        studentId.value = "";
+        studentName.value = "";
+        studentAge.value = "";
+        setError("");
+    }
+
+    saveBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        saveStudent();
+    });
+    resetBtn.addEventListener("click", resetForm);
+
+    loadStudents();
+</script>
+
+</body>
+</html>

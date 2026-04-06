@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Register</title>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --card: #0b1220;
+            --accent: #22c55e;
+            --text: #e2e8f0;
+            --muted: #94a3b8;
+        }
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: grid;
+            place-items: center;
+            background: radial-gradient(1200px 800px at 90% 10%, #1f2937 0, #0f172a 60%);
+            color: var(--text);
+            font-family: "Georgia", "Times New Roman", serif;
+        }
+        .card {
+            width: 360px;
+            background: linear-gradient(180deg, #0b1220 0, #0a0f1a 100%);
+            border: 1px solid #1f2937;
+            border-radius: 14px;
+            padding: 24px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+        }
+        h2 { margin: 0 0 12px 0; font-weight: 700; }
+        label { display: block; margin: 12px 0 6px; color: var(--muted); font-size: 14px; }
+        input {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 10px 12px;
+            border-radius: 8px;
+            border: 1px solid #334155;
+            background: #0b1220;
+            color: var(--text);
+        }
+        button {
+            width: 100%;
+            margin-top: 16px;
+            padding: 10px 12px;
+            border: none;
+            border-radius: 8px;
+            background: var(--accent);
+            color: #052e16;
+            font-weight: 700;
+            cursor: pointer;
+        }
+        .meta {
+            margin-top: 12px;
+            font-size: 13px;
+            color: var(--muted);
+        }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h2>Register</h2>
+    <form method="post" th:action="@{/register}">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+
+        <label for="email">Email</label>
+        <input id="email" name="email" type="email" placeholder="your@gmail.com" required>
+
+        <label for="password">Password</label>
+        <input id="password" name="password" type="password" placeholder="password">
+
+        <button type="submit">Register</button>
+    </form>
+    <div class="meta" th:if="${error}" th:text="${error}"></div>
+    <div class="meta"><a href="/login">Back to login</a></div>
+</div>
+
+</body>
+</html>

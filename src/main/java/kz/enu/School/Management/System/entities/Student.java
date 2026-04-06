@@ -1,41 +1,24 @@
 package kz.enu.School.Management.System.entities;
 
 public class Student {
-
     private Long id;
-    private String fullname;
+    private String name;
     private int age;
 
-    public Student() {
-    }
+    // Пустой конструктор ОБЯЗАТЕЛЕН
+    public Student() {}
 
-    public Student(Long id, String fullname, int age) {
+    public Student(Long id, String name, int age) {
         this.id = id;
-        this.fullname = fullname;
+        this.name = name;
         this.age = age;
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public String getFullname() {
-        return fullname;
-    }
-
-    public int getAge() {
-        return age;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public void setFullname(String fullname) {
-        this.fullname = fullname;
-    }
-
-    public void setAge(int age) {
-        this.age = age;
-    }
+    // Геттеры и сеттеры должны быть именно такими:
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+    public int getAge() { return age; }
+    public void setAge(int age) { this.age = age; }
 }
