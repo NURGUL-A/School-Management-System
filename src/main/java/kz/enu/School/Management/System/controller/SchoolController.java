@@ -19,9 +19,9 @@ public class SchoolController {
     private final AtomicLong nextStudentId = new AtomicLong(1);
 
     public SchoolController() {
-        students.add(new Student(1L, "Salybek Aruzhan", 20));
-        students.add(new Student(2L, "Murat Merei", 21));
-        students.add(new Student(3L, "Sultanov Arman", 22));
+        students.add(new Student(1L, "Ayazkan Nurgul", 19));
+        students.add(new Student(2L, "Ayazkan Aruzhan", 22));
+        students.add(new Student(3L, "Bekbergen Islam", 20));
 
         teachers.add(new Teacher(1L, "Kamila Tanyrbergenova", "Java"));
 
