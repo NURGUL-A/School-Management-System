@@ -46,7 +46,7 @@ public class SecurityConfig {
             if (isAdmin(authentication)) {
                 response.sendRedirect("/admin/students");
             } else {
-                response.sendRedirect("/home");
+                response.sendRedirect("/students");
             }
         };
     }
